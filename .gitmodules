@@ -1,0 +1,10 @@
+[submodule "kokkos-tools"]
+	path = kokkos-tools
+	url = https://github.com/DavidPoliakoff/kokkos-tools
+	branch = feature/fence-profiling
+[submodule "caliper"]
+	path = caliper
+	url = https://github.com/LLNL/caliper.git
+[submodule "kokkos"]
+	path = kokkos
+	url = https://github.com/kokkos/kokkos.git
