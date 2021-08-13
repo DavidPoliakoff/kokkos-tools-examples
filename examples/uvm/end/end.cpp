@@ -5,7 +5,7 @@ using mem_space = Kokkos::CudaUVMSpace;
 using view_type = Kokkos::View<float *, mem_space>;
 constexpr const int data_size = 16000;
 int repeats = 200;
-constexpr const int output_interval = 1;
+constexpr const int output_interval = 40;
 int main(int argc, char *argv[]) {
   Kokkos::initialize(argc, argv);
   {
