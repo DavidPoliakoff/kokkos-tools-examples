@@ -1,0 +1,2 @@
+KOKKOS_PROFILE_LIBRARY=@CMAKE_INSTALL_PREFIX@/lib64/libcaliper.so CALI_CALIPER_ATTRIBUTE_DEFAULT_SCOPE=process CALI_LOG_VERBOSITY=1 CALI_SERVICES_ENABLE=cuptitrace:cupti:timestamp:event:kokkoslookup:alloc:aggregate:kokkostime:report CALI_REPORT_CONFIG="SELECT function,alloc.label#cupti.fault.addr,cupti.uvm.kind,inclusive_sum(sum#cupti.uvm.bytes),sum(sum#cupti.uvm.bytes) WHERE sum#cupti.uvm.bytes GROUP BY function,alloc.label#cupti.fault.addr,cupti.uvm.kind FORMAT TREE" CALI_ALLOC_RESOLVE_ADDRESSES=TRUE CALI_CUPTITRACE_ACTIVITIES=uvm CALI_CUPTITRACE_FLUSH_ON_SNAPSHOT=true $@
+
