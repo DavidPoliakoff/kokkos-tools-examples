@@ -1,4 +1,5 @@
 if(Kokkos_ENABLE_CUDA)
 add_subdirectory(uvm)
 add_subdirectory(streams)
+add_subdirectory(tuning)
 endif()
