@@ -1,0 +1,164 @@
+#  Copyright (c) 2014-2021 Kevin Huck
+#  Copyright (c) 2014-2021 University of Oregon
+#
+#  Distributed under the Boost Software License, Version 1.0. (See accompanying
+#  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# Create a library called "Apex" which includes the source file "apex.cxx".
+# The extension is already found. Any number of sources could be listed here.
+
+include_directories(${PROJECT_BINARY_DIR}/src/apex ${APEX_SOURCE_DIR}/rapidjson/include)
+
+SET(tau_SOURCE tau_listener.cpp)
+
+if (BFD_FOUND)
+SET(bfd_SOURCE apex_bfd.cpp address_resolution.cpp)
+endif(BFD_FOUND)
+
+if (APEX_HAVE_PROC)
+SET(PROC_SOURCE proc_read.cpp)
+endif(APEX_HAVE_PROC)
+
+if (OMPT_FOUND)
+SET(OMPT_SOURCE apex_ompt.cpp)
+add_definitions(-DAPEX_WITH_OMPT)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif(OMPT_FOUND)
+
+if (LM_SENSORS_FOUND)
+SET(SENSOR_SOURCE sensor_data.cpp)
+endif(LM_SENSORS_FOUND)
+
+if (OTF2_FOUND)
+SET(OTF2_SOURCE otf2_listener.cpp otf2_listener_mpi.cpp otf2_listener_nompi.cpp)
+endif(OTF2_FOUND)
+
+if (CUPTI_FOUND)
+SET(CUPTI_SOURCE cupti_trace.cpp)
+endif(CUPTI_FOUND)
+
+if (ROCTRACER_FOUND)
+SET(ROCTRACER_SOURCE hip_trace.cpp)
+endif(ROCTRACER_FOUND)
+
+if (NVML_FOUND)
+SET(NVML_SOURCE apex_nvml.cpp)
+endif(NVML_FOUND)
+
+if (OpenACC_CXX_FOUND AND OpenACCProfiling_FOUND)
+    set(OpenACC_SOURCE apex_openacc.cpp)
+endif (OpenACC_CXX_FOUND AND OpenACCProfiling_FOUND)
+
+if (APEX_WITH_RAJA AND RAJA_FOUND)
+    set(RAJA_SOURCE apex_raja.cpp)
+endif (APEX_WITH_RAJA AND RAJA_FOUND)
+
+# Try to keep this in alphabetical order
+SET(all_SOURCE
+${CUPTI_SOURCE}
+${ROCTRACER_SOURCE}
+${NVML_SOURCE}
+apex.cpp
+apex_kokkos.cpp
+apex_kokkos_tuning.cpp
+apex_options.cpp
+event_filter.cpp
+apex_policies.cpp
+${bfd_SOURCE}
+${OMPT_SOURCE}
+${OpenACC_SOURCE}
+${RAJA_SOURCE}
+concurrency_handler.cpp
+dependency_tree.cpp
+event_listener.cpp
+handler.cpp
+memory_wrapper.cpp
+${OTF2_SOURCE}
+perftool_implementation.cpp
+policy_handler.cpp
+${PROC_SOURCE}
+profiler_listener.cpp
+${SENSOR_SOURCE}
+simulated_annealing.cpp
+task_identifier.cpp
+tcmalloc_hooks.cpp
+${tau_SOURCE}
+thread_instance.cpp
+trace_event_listener.cpp
+utils.cpp
+)
+
+add_library (apex ${all_SOURCE})
+add_library (taudummy tau_dummy.cpp)
+add_dependencies (apex taudummy)
+
+if(ACTIVEHARMONY_FOUND)
+    add_dependencies (apex project_activeharmony)
+endif(ACTIVEHARMONY_FOUND)
+
+if(OMPT_FOUND)
+    add_dependencies (apex project_ompt)
+endif(OMPT_FOUND)
+
+if(BFD_FOUND)
+    add_dependencies (apex project_binutils)
+endif(BFD_FOUND)
+
+if(OTF2_FOUND)
+    add_dependencies (apex project_otf2)
+endif(OTF2_FOUND)
+
+if(APEX_INTEL_MIC)
+    add_dependencies (apex project_boost)
+endif(APEX_INTEL_MIC)
+
+if (MPI_CXX_FOUND)
+  include_directories (${MPI_CXX_INCLUDE_PATH})
+endif(MPI_CXX_FOUND)
+
+if (APEX_WITH_CUDA)
+  include_directories (${CUDAToolkit_INCLUDE_DIR})
+endif(APEX_WITH_CUDA)
+
+# If we are building libapex.so, we want to include all the other libraries,
+# so that we can LD_PRELOAD this library with all requirements met.
+if (NOT BUILD_STATIC_EXECUTABLES)
+    if(APPLE)
+        target_link_libraries(apex ${LIBS})
+        set_target_properties(apex PROPERTIES LINK_FLAGS "${CMAKE_CURRENT_BINARY_DIR}/libtaudummy.dylib -flat_namespace")
+    else(APPLE)
+        target_link_libraries(apex ${LIBS} taudummy)
+    endif(APPLE)
+endif()
+
+if (APEX_WITH_HIP)
+    include_directories(${ROCM_ROOT}/include ${ROCM_ROOT}/include/hsa)
+endif (APEX_WITH_HIP)
+
+# add the binary tree to the search path for include files
+# so that we will find ApexConfig.h
+if(HAVE_RCR)
+include_directories("${PROJECT_BINARY_DIR}/src/apex" ${RCR_INCLUDE_PATH})
+else()
+include_directories("${PROJECT_BINARY_DIR}/src/apex")
+endif()
+
+INSTALL(FILES apex.h
+    apex_api.hpp
+    apex_types.h
+    apex_policies.h
+    apex_policies.hpp
+    handler.hpp
+    profile.hpp
+    apex_export.h
+    utils.hpp
+    apex_options.hpp
+    profiler.hpp
+    simulated_annealing.hpp
+    task_wrapper.hpp
+    task_identifier.hpp
+    DESTINATION include)
+
+INSTALL(TARGETS apex RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+INSTALL(TARGETS taudummy RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+

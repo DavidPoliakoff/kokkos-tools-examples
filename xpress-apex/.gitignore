@@ -1,0 +1,17 @@
+build
+build-*
+build_*
+test
+doc/webdocs/site
+install*
+*.swp
+regression*
+*.sh
+*DS_Store
+concurrentqueue
+perfstubs
+rapidjson
+taskgraph*dot
+apex*csv
+trace_events.*.json
+OTF2_archive
