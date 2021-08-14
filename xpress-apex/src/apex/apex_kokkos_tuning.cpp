@@ -156,7 +156,7 @@ private:
     }
 public:
     ~KokkosSession() {
-        writeCache();
+        //writeCache();
     }
     static KokkosSession& getSession();
     KokkosSession(const KokkosSession&) =delete;
