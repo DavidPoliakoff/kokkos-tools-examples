@@ -1,7 +1,7 @@
 #include <Kokkos_Core.hpp>
 #include <iostream>
 
-using view_type = Kokkos::View<float*, Kokkos::DefaultExecutionSpace>;
+using view_type = Kokkos::View<float *, Kokkos::DefaultExecutionSpace>;
 constexpr const int data_size = 16000;
 int repeats = 200000;
 int main(int argc, char *argv[]) {
@@ -15,16 +15,19 @@ int main(int argc, char *argv[]) {
     auto f2_mirror = Kokkos::create_mirror_view(temperature_field2);
     for (int x = 0; x < repeats; ++x) {
       Kokkos::parallel_for(
-          "process_temp1", Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(streams[0], 0, data_size),
+          "process_temp1",
+          Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(streams[0], 0,
+                                                             data_size),
           KOKKOS_LAMBDA(int i) { temperature_field1(i) -= 1.0f; });
       Kokkos::deep_copy(f1_mirror, temperature_field1);
       Kokkos::parallel_for(
-          "process_temp2", Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(streams[1], 0, data_size),
+          "process_temp2",
+          Kokkos::RangePolicy<Kokkos::DefaultExecutionSpace>(streams[1], 0,
+                                                             data_size),
           KOKKOS_LAMBDA(int i) { temperature_field2(i) -= 1.0f; });
       Kokkos::deep_copy(f2_mirror, temperature_field2);
-      
-      /** could do an edit step here */ 
 
+      /** could do an edit step here */
     }
   }
   Kokkos::finalize();
