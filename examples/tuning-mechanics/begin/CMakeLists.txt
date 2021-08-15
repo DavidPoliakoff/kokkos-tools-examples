@@ -1,0 +1,3 @@
+add_executable(tuning_mechanics_begin begin.cpp)
+target_link_libraries(tuning_mechanics_begin Kokkos::kokkos)
+install(TARGETS tuning_mechanics_begin)
