@@ -22,11 +22,11 @@
 #include "task_wrapper.hpp"
 #include "thread_instance.hpp"
 #include <iostream>
-#include <cmath>
 #include <iomanip>
 #include <fstream>
 #include <memory>
 #include <sstream>
+#include <cmath>
 #include <math.h>
 #include "apex_options.hpp"
 #include "profile.hpp"
