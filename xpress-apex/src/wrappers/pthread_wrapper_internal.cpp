@@ -20,7 +20,7 @@
 #include <memory>
 #include <atomic>
 
-std::atomic<int64_t> task_id(-1);
+std::atomic<int64_t> task_id{-1};
 
 /*
  * This "class" is used to make sure APEX is initialized

@@ -59,7 +59,7 @@ extern "C" void apex_memory_lights_out();
 class book_t {
 public:
     size_t saved_node_id;
-    std::atomic<size_t> totalAllocated = 0.0;
+    std::atomic<size_t> totalAllocated { 0 };
     std::unordered_map<void*,record_t> memoryMap;
     std::mutex mapMutex;
     ~book_t() {
