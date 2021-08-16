@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(kokkos_tools_examples)
-
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/caliper/CMakeLists.txt)
+  message(FATAL_ERROR """
+  Submodules have not been checked out, this build will fail. In the root of the repo, please type
+    git submodule update --init --recursive
+  """)
+endif()
 add_subdirectory(kokkos)
 cmake_policy(SET CMP0077 NEW)
 set(WITH_KOKKOS ON CACHE BOOL "")
